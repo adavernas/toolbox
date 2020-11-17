@@ -3,12 +3,12 @@ Toolbox for "A Solution Method for Continuous-Time General Equilibrium Models"
 Adrien d’Avernas and Quentin Vandeweyer (November 17, 2020)
 
 List of code files in the folder ’files’
-• main.m: solves the model and produces the figures
-• model.m: includes all the model specific specifications. Model parameters and variables are declared in this file. Initial guesses are provided. Further, the equilibrium conditions for secondary variables as function of the endogenous variables are written first. The equations for endogenous variables are defined after. The different sections in the file are called to solve the model
-• writefun.m: Matlab file setting up the model to be solved. Equations declared in model.m are called here.
-• HJB.m: the model specific Hamiltonian-Jacobi Bellman equation is written separately from the other model equation in this file. The expression of the HJB after substituting for the optimal conditions has to be used.
-• plotgraphs1D.m: creates the figures of a model with one state variable.
-• plotgraphs2D.m: creates the figures of a model with two state variables.
+- main.m: solves the model and produces the figures
+- model.m: includes all the model specific specifications. Model parameters and variables are declared in this file. Initial guesses are provided. Further, the equilibrium conditions for secondary variables as function of the endogenous variables are written first. The equations for endogenous variables are defined after. The different sections in the file are called to solve the model
+- writefun.m: Matlab file setting up the model to be solved. Equations declared in model.m are called here.
+- HJB.m: the model specific Hamiltonian-Jacobi Bellman equation is written separately from the other model equation in this file. The expression of the HJB after substituting for the optimal conditions has to be used.
+- plotgraphs1D.m: creates the figures of a model with one state variable.
+- plotgraphs2D.m: creates the figures of a model with two state variables.
 Process to follow for solving a new model
 A short step-by-step description to use the algorithm and code for your own model.
 1. Define variables and parameters in model.m
