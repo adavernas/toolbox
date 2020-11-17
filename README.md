@@ -9,6 +9,7 @@ List of code files in the folder ’files’
 - HJB.m: the model specific Hamiltonian-Jacobi Bellman equation is written separately from the other model equation in this file. The expression of the HJB after substituting for the optimal conditions has to be used.
 - plotgraphs1D.m: creates the figures of a model with one state variable.
 - plotgraphs2D.m: creates the figures of a model with two state variables.
+
 Process to follow for solving a new model
 A short step-by-step description to use the algorithm and code for your own model.
 1. Define variables and parameters in model.m
