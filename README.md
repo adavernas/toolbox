@@ -11,6 +11,7 @@ List of code files in the folder ’files’
 - plotgraphs2D.m: creates the figures of a model with two state variables.
 
 Process to follow for solving a new model:
+
 A short step-by-step description to use the algorithm and code for your own model.
 1. Define variables and parameters in model.m
 2. Rewrite the system of equation in the file model.m (section ’Model’ in the code)
