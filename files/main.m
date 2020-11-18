@@ -173,6 +173,20 @@ if strcmp(par.guess,'on')
 else
  % call intitial guess specified in model.m-file   
  model
+ 
+    vei = finitediff2D(vi,D(1,:,:),x1,x2,1);
+    vzi = finitediff2D(vi,D(2,:,:),x1,x2,2);
+    
+    veh = finitediff2D(vh,D(1,:,:),x1,x2,1);
+    vzh = finitediff2D(vh,D(2,:,:),x1,x2,2);
+    
+    V0 = NaN([par.nv par.dim]);
+    V0(par.V.ivi,:,:)  = vi;
+    V0(par.V.ivei,:,:) = vei;
+    V0(par.V.ivzi,:,:) = vzi;
+    V0(par.V.ivh,:,:)  = vh;
+    V0(par.V.iveh,:,:) = veh;
+    V0(par.V.ivzh,:,:) = vzh;
 end
 %% Iterate over Time for Boundaries
 tic
