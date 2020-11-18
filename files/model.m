@@ -85,29 +85,8 @@ elseif(section == "Guess") & strcmp(par.guess,'off')
     X_(par.X_.iqzz,:,:) = eps;
         
     % Initial Guess for V
-    vi = NaN(par.n1,par.n2);
-    vh = NaN(par.n1,par.n2);
-    
-    for i1=1:par.n1
-        for i2=1:par.n2
-            vi(i1,i2) = par.rhoi;
-            vh(i1,i2) = par.rhoh;
-        end
-    end
-    
-    vei = finitediff2D(vi,D(1,:,:),x1,x2,1);
-    vzi = finitediff2D(vi,D(2,:,:),x1,x2,2);
-    
-    veh = finitediff2D(vh,D(1,:,:),x1,x2,1);
-    vzh = finitediff2D(vh,D(2,:,:),x1,x2,2);
-    
-    V0 = NaN([par.nv par.dim]);
-    V0(par.V.ivi,:,:)  = vi;
-    V0(par.V.ivei,:,:) = vei;
-    V0(par.V.ivzi,:,:) = vzi;
-    V0(par.V.ivh,:,:)  = vh;
-    V0(par.V.iveh,:,:) = veh;
-    V0(par.V.ivzh,:,:) = vzh;
+    vi = par.rhoi;
+    vh = par.rhoh;    
     
 elseif (section == "Model")
 %% Model specific set up:
