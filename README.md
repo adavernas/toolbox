@@ -1,6 +1,6 @@
 # toolbox
 Toolbox for "A Solution Method for Continuous-Time General Equilibrium Models"
-Adrien d’Avernas and Quentin Vandeweyer (November 17, 2020)
+Adrien d’Avernas, Valentin Schubert, and Quentin Vandeweyer (November 17, 2020)
 
 List of code files in the folder ’files’
 - main.m: solves the model and produces the figures
