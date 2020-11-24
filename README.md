@@ -27,7 +27,5 @@ A short step-by-step description to use the algorithm and code for your own mode
 Process to follow when working with the presented examples:
 
 In this toolbox we propose two models based on a model introduced by Brunnermeier and Sannikov (2014) and Di Tella (2016) respectively. 
-
 In order to run the models, the model.m and HJB.m files of the respective models have to be copied into the 'files' folder of the toolbox (the previous model.m and HJB.m have to be replaced). 
-
 The model is solved by running the main.m file in the folder 'files'. Important: when changing or making changes to the model expressions in model.m or the HJB.m file, 'par.write' on line 21 in main.m has to be changed from 'off' to 'on'. Parameter values can be changed with 'par.write = 'off''
