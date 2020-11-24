@@ -1,0 +1,418 @@
+\documentclass[12pt,english]{article}
+
+\usepackage[toc,page]{appendix}
+\usepackage{rotfloat}
+
+\usepackage{amsthm,amsmath,amssymb,latexsym}
+
+\usepackage{babel}
+\DeclareFontFamily{U}{mathx}{\hyphenchar\font45}
+\DeclareFontShape{U}{mathx}{m}{n}{<-> mathx10}{}
+\DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
+\DeclareMathAccent{\widebar}{0}{mathx}{"73}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{pdfpages}
+\usepackage[flushleft]{threeparttable}
+\usepackage{enumerate}
+\usepackage{rotfloat}
+\usepackage{epstopdf}
+\usepackage{bbm}
+\usepackage{geometry}
+\usepackage{pdflscape}
+\usepackage{ragged2e}
+\usepackage[hyperfootnotes=false,hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{endnotes}
+\onehalfspacing
+\usepackage{tabularx, booktabs}
+\usepackage{color}
+\usepackage{standalone}
+\usepackage{bibentry} 
+\usepackage{afterpage}
+%\allowdisplaybreaks
+\usepackage[round]{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,open={(},close={)}}
+
+\usepackage{array,multirow}
+\usepackage{rotating}
+
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+
+\DeclareFontFamily{U}{BOONDOX-calo}{\skewchar\font=45 }
+\DeclareFontShape{U}{BOONDOX-calo}{m}{n}{
+  <-> s*[1.05] BOONDOX-r-calo}{}
+\DeclareFontShape{U}{BOONDOX-calo}{b}{n}{
+  <-> s*[1.05] BOONDOX-b-calo}{}
+\DeclareMathAlphabet{\mathlb}{U}{BOONDOX-calo}{m}{n}
+\SetMathAlphabet{\mathlb}{bold}{U}{BOONDOX-calo}{b}{n}
+\DeclareMathAlphabet{\mathblb}{U}{BOONDOX-calo}{b}{n}
+
+\newcommand*\xbar[1]{%
+  \hbox{%
+    \vbox{%
+      \hrule height 0.5pt % The actual bar
+      \kern0.5ex%         % Distance between bar and symbol
+      \hbox{%
+        \kern-0.1em%      % Shortening on the left side
+        \ensuremath{#1}%
+        \kern-0.1em%      % Shortening on the right side
+      }%
+    }%
+  }%
+} 
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{Assumption}[theorem]{Assumption}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{definition}[theorem]{Definition}
+
+\usepackage[bottom]{footmisc}
+\makeatletter
+\renewcommand\@biblabel[1]{}
+\renewenvironment{thebibliography}[1]
+     {\section*{\refname}%
+      \@mkboth{\MakeUppercase\refname}{\MakeUppercase\refname}%
+      \list{}%
+           {\leftmargin0pt
+            \@openbib@code
+            \usecounter{enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+\makeatother
+
+\makeatletter\@addtoreset{chapter}{part}\makeatother
+
+\urlstyle{same}
+ 
+\definecolor{darkblue}{rgb}{0.0,0.2,0.6}
+\hypersetup{
+    colorlinks=true,
+    urlcolor=darkblue,
+    citecolor=darkblue,
+    linkcolor=black
+}
+ 
+\newcommand{\foo}{\makebox[0pt]{\textbullet}\hskip-0.5pt\vrule width 1pt\hspace{\labelsep}}
+%\newcommand{\foo}{\hspace{-2.3pt}$\bullet$ \hspace{5pt}}
+\newcommand{\hl}[1]{\textbf{\textcolor{red}{(#1)}}}
+\newcommand{\sfix}[1]{{\typeout{SFIX on Page \thepage!}\setlength{\fboxrule}{1pt}\fcolorbox{black}{yellow}{{#1}}} }
+\newcommand{\fix}[1]{\typeout{FIX on Page \thepage!} \standout{#1} }
+\newcommand{\standout}[1]{ { 
+    \renewcommand{\baselinestretch}{1.0} \normalsize \footnotesize
+    \begin{center}
+      \setlength{\fboxrule}{3pt}%
+      \fcolorbox{black}{yellow}{
+        \begin{minipage}{0.8\textwidth}
+          {\bf \footnotesize #1}
+        \end{minipage}
+      }
+    \end{center}
+  } }
+
+\makeatletter
+\newenvironment{chapquote}[2][2em]
+{\setlength{\@tempdima}{#1}%
+  \def\chapquote@author{#2}%
+  \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+  \itshape}
+{\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
+\graphicspath{{../graphs/}}
+\renewcommand{\floatpagefraction}{0.1}
+\begin{document}
+
+This document presents a second working example for the Matlab toolbox from \citet{asv20}\footnote{Available for download under \url{https://github.com/adavernas/toolbox} }. We derive the model and relate the different expressions to the equations needed to solve the model numerically using the toolbox. \\
+In this example, we present the model derived in \citet{dit16} where two agents have \citet*{epst89} utility functions and agents face a time-varying, idiosyncratic volatility. 
+
+\paragraph{Technology}
+Experts can use capital to produce consumption goods with this production technology:
+\begin{equation}
+y_t^i = \left[a _ \iota(g_t^i)\right]k_t^i
+\end{equation}
+where $g^i$ is the growth rate of the capital stock of agent $i$. In order to reach such as growth rate, agent $i$ must invest $\iota(g_t^i)$ consumption goods. Agent $i$'s capital stock follows an Ito process:
+\begin{equation}
+\frac{dk_t^i}{k_t^i} = g_t^idt + \sigma dZ_t + v_tdW_t^i
+\end{equation} 
+where $Z$ is an aggregate Brownian motion, and $W$ is an idiosyncratic Brownian motion of expert $i$.  The exposure to the aggregate shock $\sigma$ is assumed to be constant, while the load on the idiosyncratic shock is time-varying and follows an exogenous stochastic process of the form:
+\begin{equation}
+dv_t = \lambda(\bar{v} - v_t)dt + \sigma^v\sqrt{v_t}dZ_t
+\end{equation}
+The idiosyncratic shock cancel out in aggregate. The law of motion of aggregate capital $K_t  = \int_{[0,1]}k_t^idi$ is given by:
+\begin{align*}
+	dK_t = \left(\int_{[0,1]}k_t^idi\right)dt + \sigma K_tdZ_t
+\end{align*}
+\paragraph{Preferences} There are two types of agents: households $h \in H$ and experts $i \in I$. Both agents have stochastic differential utility, as developed by \citet*{duff92}. The utility of agent $j$ over his consumption process $c^j_t$ is defined as
+\begin{align*}
+U^j_t = \mathbb{E}_t\left(\int_t^\infty f\left(c^j_s,U^j_s\right)ds \right).
+\end{align*}
+The function $f_j(c,u)$ is a normalized aggregator of consumption and continuation value in each period defined as
+\begin{align*}
+f(c,U) = \frac{1-\gamma}{1-1/\zeta}U\left[\left(\frac{c}{((1-\gamma)U)^{1/(1-\gamma)}}\right)^{1-1/\zeta}-\rho\right]
+\end{align*}
+where $\rho$ is the rate of time preference, $\gamma$ is the coefficient of relative risk aversion, and $\zeta$ determines the elasticity of intertemporal substitution. 
+
+\paragraph{Markets} Experts can trade capital at a competitive market price $q_t$, which has the following law of motion:
+\begin{equation}
+\frac{dq_t}{q_t} = \mu_t^qdt + \sigma_t^qdZ_t
+\end{equation}
+Financial markets are complete with a stochastic discount factor $\eta_t$ that follows the process:
+\begin{equation}
+\frac{d\eta_t}{\eta_t} = - r_tdt + \pi_tdZ_t
+\end{equation}
+where $r_t$ is the risk-free rate and $\pi_t$ is the price of \textbf{aggregate} risk. 
+
+\paragraph{Households}
+Households cannot hold capital of a single firm, but invest in the complete financial market. They choose their optimal consumption $c^j_t$ and exposure to aggregate risk $\sigma_t^w$ in order to maximize discounted infinite life time expected utilities $U^j_t$. Taking the stochastic discount factor $\eta_t$ as given, at any time, they solve the following maximization problem:
+\begin{align*}
+&\max_{c^h\geq', \sigma^w} U(c^h)\\
+\text{subject to }\frac{dn_t^h}{n_t^h} = &(r_t + \sigma_t^w\pi_t - \frak{c}^h_t)dt + \sigma_t^wdZ_t
+\end{align*}
+where $n^h_t$ is the wealth of a household, $ \mathfrak{c}^h_t  = c^h_t /n^h_t $ his consumption rate. $Z_t$ is a standard Brownian motion that reflects aggregate risk.
+
+\paragraph{Expert's problem}
+Experts can trade capital and use capital for production, as well as participate in the aggregate financial market. The cumulative return from investing in capital for an expert $i$ is given by $R_t^{k,i}$ that follows:
+\begin{equation*}
+dR_t^{k,i} = \underbrace{\vphantom{\frac{a}{b}} \left[ \frac{a - \iota(g_t^i)}{q_t} + g_t^i + \mu_t^q + \sigma\sigma_t^q\right]}_{r_t^{ki}}dt + (\sigma + \sigma_t^q)dZ_t + v_tdW_t^i
+\end{equation*}
+Thus, an expert chooses her consumption and trading strategies to maximize her lifetime expected utility
+\begin{align*}
+&\max_{c^i\geq0, g, k\geq0, \theta}U(c^i)\\
+\text{subject to } \frac{dn_t^i}{n_t^i} = &(\mu_t^{n,i} - \frak{c}_t^i)dt + \sigma_t^{n,i}dZ_t + \tilde{\sigma}_t^{n,i}dW_t^i
+\end{align*}
+where 
+\begin{align*}
+&\mu_t^{n,i} = r_t + q_tk_t^i(r_t^{ki} - r_t) - (1 - \phi) q_tk_t^i(\sigma + \sigma_t^q)\pi_t + \theta_t^i\pi_t\\
+&\sigma_t^{n,i} = \phi q_tk_t^i(\sigma + \sigma_t^q) + \theta_t^i\\
+&\tilde{\sigma}_t^{n,i} = \phi q_tk_t^iv_t
+\end{align*}
+
+\paragraph{Solving the HJB}We will guess and verify that the homotheticity of preferences allows us to write the value function for agents of type $j$ as: 
+\begin{align}\label{eq:guess}
+U\left(n^j_t,\xi^j_t\right) = \frac{\left(n^j_t\xi^j_t\right)^{1-\gamma}}{1-\gamma},
+\end{align}
+where variable $\xi^j_t$ follows 
+\begin{align*}
+\frac{d \xi^j_t}{\xi^j_t} = \mu^{\xi,j}_t dt + \sigma^{\xi,j}_t dZ_t
+\end{align*}
+Using the guess of the value function, the Hamilton-Jacobi-Bellman (HJB) equation for experts $i$ is equal to
+\begin{align*}
+	0 = &\max \Bigg\{ \Big(  \frac{\rho}{1-1/ \varpi} \Big) \Big[ \Big( \frac{c_t^j}{\xi_t^j} \Big)^{1-1/\varpi} - 1 \Big]\\
+        &\quad+ \mu^{j,\xi}_t +  \mu_t^{nj} - \frac{\gamma}{2} (\sigma^{nj}_t )^2  - \frac{\gamma}{2} (\sigma^{\xi j}_t)^2 \\
+        &\quad+ (1-\gamma) \sigma^{\xi j}_t \sigma^{nj}_t   - \frac{\gamma}{2}(\tilde{\sigma}_t^j)^2 \Bigg\}
+\end{align*}
+while households face the following HJB:
+\begin{align*}
+	0 = &\max\Bigg\{ \Big(  \frac{\rho}{1-1/ \varpi} \Big) \Big[ \Big( \frac{c_t^j}{ \xi_t^j} \Big)^{1-1/\varpi} - 1 \Big]\\
+        &\quad+ \mu^{j,\xi}_t +  \mu_t^{nj} - \frac{\gamma}{2} (\sigma^{nj}_t )^2  - \frac{\gamma}{2} (\sigma^{\xi j}_t)^2 \\
+        &\quad+ (1-\gamma) \sigma^{\xi j}_t \sigma^{nj}_t\Bigg\}
+\end{align*}
+The first order conditions with respect to consumption give:
+\begin{align}
+\frak{c}_t^i &= \rho^{1/\psi}(\xi_t^i)^{(\psi - 1)/\psi}\\
+\frak{c}_t^h &= \rho^{1/\psi}(\xi_t^h)^{(\psi - 1)/\psi}\\
+\end{align}
+The first order condition for $g$ is equal to 
+\begin{align}
+\iota'(g_t^i) = q_t
+\end{align}
+From the first order condition for $\theta$, we get
+\begin{align}
+	\sigma_t^{ni} = \frac{\pi_t}{\gamma} - \frac{\gamma - 1}{\gamma}\sigma_t^{\xi,i}
+\end{align}
+while the first order condition for $\sigma_t^{nh}$ from the households' maximization problem yields
+\begin{align}
+	\sigma_t^{nh} = \frac{\pi_t}{\gamma} - \frac{\gamma - 1}{\gamma}\sigma_t^{\xi,h}
+\end{align}
+\paragraph{Optimality Conditions} The first order conditions with respect to $\frak{c}^j_t,\iota^j_t$, and $w^j_t$ are given by
+\begin{align*}
+\left(\frak{c}^j_t\right)^{-1/\zeta} = \left(\xi^j_t\right)^{\frac{1-1/\zeta}{1-\gamma}},
+\end{align*}
+\begin{align*}
+1/q_t = \Phi_{\iota}(\iota_t),
+\end{align*}
+\begin{align*}
+\mu^{r,j}_{t}-r_t - \gamma w^j_t \big(  \sigma^{q,\sigma}_t \big)^2  - \gamma w^j_t   \big( \sigma_t + \sigma^{q,k}_t \big)^2  +   \sigma^{q,\sigma}_t \sigma^{\xi,\sigma,j}_t  + \big( \sigma_t + \sigma^{q,k}_t\big) \sigma^{\xi,k,j}_t =0.
+\end{align*}
+
+Plugging in the optimality conditions in the HJB gives:
+\begin{align}\label{eq:opt}
+0 = & \frac{1}{1-1/\zeta} \left(\frak{c}^j_t-\rho\right) + r_t - \frak{c}^j_t + \frac{\gamma}{2} \big(  w^j_t  \sigma^{q,\sigma}_t \big)^2  + \frac{\gamma}{2}   \big( w^j_t  \sigma_t + w^j_t \sigma^{q,k}_t \big)^2 + \frac{\mu^{\xi,j}}{1-\gamma}. 
+\end{align}
+
+\paragraph{Market Clearing Conditions} We start by providing the definition of such an equilibrium in the state variables $\{x_t, v_t\}$, where $x_t$ is defined as the share of wealth in the hands of the intermediaries:
+\begin{align*}
+x_t  = \frac{n^i_t}{n^h_t+n^i_t} = \frac{n^i_t}{q_t k_t}.
+\end{align*}
+Then, we can use the market clearing condition for consumption to find $q_t$. Market clearing for consumption dictates that consumption from both types of agents equals the surplus from the production technology. So we have: 
+\begin{align*}
+\left(\frak{c}_t^ix_t + \frak{c}^h(1 - x_t)\right)q_t = a - \iota(g^i_t)
+\end{align*}
+The market for capital clears:
+\begin{align}
+	q_tk_t^ix_t = 1
+\end{align}
+And financial markets clear:
+\begin{align}
+	\sigma_t^{ni}x_t + \sigma_t^{nh}(1 - x_t) = \sigma + \sigma_t^q
+\end{align}
+Now let 
+\begin{equation}
+\psi_t \equiv \frac{w^i_t n^i_t}{w^i_t n^i_t + w^h_t n^h_t} = w^i_t \eta_t,
+\end{equation} 
+So finally, we have
+\begin{equation}
+\left(\frak{c}^i_t  \eta_t+  \frak{c}^h_t (1-\eta_t) \right) q_t= \psi_t (a^i - \iota_t) + (1-\psi_t) (a^h -  \iota_t)
+\end{equation} 
+The market clearing condition for capital allows us to identify $r_t$:
+\begin{align*}
+&k_t^i + k_t^h = k_t\\
+&\frac{k_t^i}{k_t} + \frac{k_t^h}{k_t} = 1\\
+&\frac{k_t^in_t^iq_t}{n_t^iq_tk_t} + \frac{k_t^hn_t^hq_t}{n_t^hq_tk_t} = 1\\
+&w^i_t  \eta_t +  w^h_t (1-\eta_t) = 1.
+\end{align*} 
+
+Further, using our definition of $x_t$ and Ito's lemma, we can derive the law of motion of $x_t$ as: 
+\begin{equation}\label{eq:lometa}
+\begin{split}
+\frac{dx_t}{x_t}=  &\bigg(\mu_t^{ni} - \frak{c}_t^i - \mu_t^q - g_t^i - \sigma_t^q\sigma  + (\sigma + \sigma_t^q)^2 - \sigma_t^{ni}(\sigma + \sigma_t^q) \bigg) dt \nonumber\\
+& + \big(\sigma_t^{ni} + \sigma + \sigma_t^q\big)dZ_t
+\end{split}
+\end{equation}
+
+
+\paragraph{Linking the model to the code} We start by collecting parameters and variables.
+The model parameters are reported in table \ref{tab:para}. The parameters have to be specified (as well as given a value) in the section \textit{Parameters} in the file \texttt{model.m} of the toolbox.
+\begin{table}
+\center
+\caption{Model parameters}
+\begin{tabular}{ll} \toprule
+Parameter & Definition \\ \midrule
+$\gamma$ & relative risk aversion\\
+$\psi$ & intertemporal elasticity of substitution\\
+$\rho$  & discount rate\\ 
+$\delta$ & \\ \midrule
+$a^i$ & productivity of agent $i$\\
+$a^h$ & productivity of agent $h$\\ 
+$\kappa_p$ & investment costs \\ \midrule
+$\kappa_z$ & drift of volatility \\
+$\bar{v}$ & average volatility \\
+$\varsigma$ & loading of volatility process \\
+$\sigma$ & \\
+$\phi$ & \\
+$\tau$ & \\
+$\lambda$ & \\
+$A$ & \\
+$B$ & \\ \toprule
+\label{tab:para}
+\end{tabular}
+\end{table}
+Next, we focus on the variables. Model specific variables are shown in table \ref{tab:end}. Endogenous variables are specified in the array \texttt{vars} in section \textit{Variables}  in the file \texttt{model.m} of the toolbox, while secondary variables are listed in \texttt{vars2}.
+\begin{table}
+\center
+\caption{Variables}
+\begin{tabular}{ll} \toprule
+Variables & Definition \\ \midrule
+Endogenous & $q_t$, $\mu_t^{x}$, $\sigma_t^{nh}$, $\sigma_t^{x}$, $\theta_t$\\  \midrule
+Secondary    & $\frak{c}_t^i$, $\frak{c}_t^h$, $x$, $v$,\\
+                     & $\tilde{\sigma}_t^z$, $\mu_t^{q}$, $r_t$, $\mu_t^{ni}$,$\mu_t^{nh}$, $\sigma_t^{ni}$, \\
+                     & $\sigma_t^{\xi i}$, $\sigma_t^{\xi h}$, $g_t^i$, $\mu_t^v$, $\pi_t$, $\iota^i$, $\sigma_t^{q}$ \\ \toprule 
+\label{tab:var}
+\end{tabular}
+\end{table}
+The secondary variables are defined as follows. The two state variables are 
+\begin{align}
+&x_t = e\\
+&v_t = z
+\end{align}
+In the code, the wealth multipliers are 
+\begin{align}
+&\xi_t^i = vi\\
+&\xi_t^h = vh\\
+\end{align}
+
+Consumption-to-wealth ratio is given by the first order condition:
+\begin{align}
+&c_t^i = \rho^{1/\psi}(\xi_t^i)^{\frac{\psi - 1}{\psi}}\\
+&c_t^h =\rho^{1/\psi}(\xi_t^h)^{\frac{\psi - 1}{\psi}}
+\end{align}
+From the market clearing conditions, we have:
+\begin{align}
+ k = \frac{1}{q_tx_t}
+\end{align}
+
+Investment maximization problem yields
+\begin{align}
+&\iota_t^i = \frac(1){2A}(q_t - B) - \delta
+\end{align}
+By assumption, we have:
+\begin{align}
+	&\mu_t^v = \kappa_z(\bar{v} - v)
+\end{align}
+The functional form for $\Phi^j$ was assumed to be:
+\begin{align}
+&\Phi^i = log(1 + \kappa_p\iota_t^i)/\kappa_p - \delta^i\\
+&\Phi^h = log(1 + \kappa_p\iota_t^h)/\kappa_p - \delta^h
+\end{align}
+The drift of the state variable $\sigma_t$ was assumed to be
+\begin{align}
+&\mu^{\sigma} = \kappa(\sigma_t - \bar{v_t})\\
+&\tilde{\sigma}_t^v = \sigma_t^v\sqrt{v_t}
+\end{align}
+
+Using Ito's lemma, we derive
+\begin{align}
+	\sigma_t^{\xi i} = \frac{\xi_{x}^i}{\xi^i}\sigma^x x +  \frac{\xi_{v}^i}{\xi^i}\tilde{\sigma}_t^v\\
+	\sigma_t^{\xi h} = \frac{\xi_{x}^h}{\xi^h}\sigma^x x +  \frac{\xi_{v}^h}{\xi^h}\tilde{\sigma}_t^v	
+\end{align}
+Similarly, we have 
+\begin{align}
+	\sigma_t^{q} = &\frac{q_{x}}{q_t}\sigma_t^x x_t +  \frac{q_{v}}{q_t}\tilde{\sigma}_t^v\\
+	\mu_t^q = &\frac{q_x}{q_t}\mu_t^x + \frac{q_v}{q_t}\mu_t^vv_t \\
+			& + \frac{1}{2}\frac{q_{xx}}{q_t}(\sigma_t^x)^2\\
+			& + \frac{1}{2}\frac{q_{vv}}{q_t}(\tilde{\sigma}_t^v)^2v_t \\
+			& + \frac{q_{xv}}{q_t}\sigma_t^x\tilde{\sigma}_t^v\sqrt{v_t}
+\end{align}
+After some algebra using the experts' FOCs, we get an expression for the risk-free rate:
+\begin{align}
+	r_t = & (a - \iota_t^i)/q_t + g_t^i + \mu_t^q + \sigma\sigma_t^q - (1 - \phi)(\sigma + \sigma_t^q)\pi_t \\
+	        & -\gamma(\sigma + \sigma_t^q)(\phi q_tk_t(\sigma + \sigma_t^q) + \theta) \\
+	        & + ( 1 - \gamma)\phi(\sigma + \sigma_t^q)\sigma_t^{\xi i}\\
+	        & - \gamma q_tk_t(\phi v)^2
+\end{align} 
+And from the two budget constraints, we have:
+\begin{align}
+	\mu_t^{ni} &= r_t + \gamma(\phi v)^2/x^2 + \pi_t\sigma_t^{ni}\\
+	\mu_t^{nh} &= r_t  + \pi_t\sigma_t^{nh}
+\end{align}
+The model is closed be defining the endogenous variables:
+\begin{align}
+	&eqmux = (\mu_t^{ni} - c_t^i - \mu_t^q - g_t^i - \sigma_t^q\sigma + (\sigma + \sigma_t^q)^2 - \sigma_t^{ni}(\sigma + \sigma_t^q)x_t - \mu_t^v\\
+	&eqq      = (c_t^ix_t + c_t^h(1 - x_t))q_t - (a - g_t^i) \\
+	&eqsignh = \sigma_t^{ni}x_t + \sigma_t^{nh}(1 - x_t) - (\sigma + \sigma_t^q)\\
+	&eqsigx   = (\sigma_t^{ni} + \sigma + \sigma_t^q)x_t - \sigma_t^x\\
+	&eqtheta = \pi_t + ( 1 - \gamma)\sigma_t^{\xi i} - \gamma\phi q_tk_t(\sigma + \sigma_t^q) - \gamma\theta_t
+\end{align}
+
+\nobibliography{bibliography}
+
+\end{document}
