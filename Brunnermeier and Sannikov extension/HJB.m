@@ -1,3 +1,9 @@
+% This file is part of an extension of the model introduced by Brunnermeier and Sannikov (2014)
+% It specifies the Hamilton-Jacobi-Bellman Equation to the model
+% written by Valentin Schubert
+% 2020 d'Avernas, Schubert and Vandeweyer all rights reserved
+
+%%
 function [rV,uV,muV,sigV] = HJB(SS,VV,XX,XX_,par,j)
 
 e = SS(par.S.ie,:);
@@ -57,7 +63,7 @@ sigV = [(siges.*e).^2 + (sigek.*e).^2;
    
 rV   = - (1-gamma)*( 1./(1-1/zeta).*(c-rho) ...
      + r - c ...
-     + gamma./2.*( w.*(sigqs).^2 + w.*(sigqk+sigma).^2 ) );
+     + gamma./2.*( w.*(sigqs).^2 + w.*(sigqk+sigma).^2 ) ); %Equation (36)
 
 
 
