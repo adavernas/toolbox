@@ -1,3 +1,10 @@
+% This file specifies the model introduced by Di Tella (2016)
+% It is part of the toolbox developed in d'Avernas, Schubert and Vandeweyer (2020)
+% The model presented here serves as working example of this toolbox
+% written by Valentin Schubert
+% 2020 d'Avernas, Schubert and Vandeweyer all rights reserved
+
+
 %% Define model specific parameters:
 if (section == "Parameters")
 param = {'gammai','ai','ah','rhoi','rhoh','sigz','vbar','deltai','deltah',...
