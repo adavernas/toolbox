@@ -171,9 +171,16 @@ if strcmp(par.guess,'on')
         end
     end
 else
- % call intitial guess specified in model.m-file   
+ % call initial guess specified in model.m-file   
  model
- 
+
+% compute initial guesses for the partial derivatives of the value functions
+     for i1=1:par.n1
+        for i2=1:par.n2
+            vi(i1,i2) = vi_;
+            vh(i1,i2) = vh_;
+        end
+    end
     vei = finitediff2D(vi,D(1,:,:),x1,x2,1);
     vzi = finitediff2D(vi,D(2,:,:),x1,x2,2);
     
