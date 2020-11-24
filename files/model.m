@@ -85,8 +85,8 @@ elseif(section == "Guess") & strcmp(par.guess,'off')
     X_(par.X_.iqzz,:,:) = eps;
         
     % Initial Guess for V
-    vi = par.rhoi;
-    vh = par.rhoh;    
+    vi_ = par.rhoi;
+    vh_ = par.rhoh;    
     
 elseif (section == "Model")
 %% Model specific set up:
