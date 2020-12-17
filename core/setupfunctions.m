@@ -98,13 +98,13 @@ if strcmp(par.write,'on')
     
     for in = 1:length(fun)
         for ib = 1:par.nb
-            eval(['ordervars(''',fun{in},'fun',bnd{ib},'''',vec{:},fun{in},'vars',bnd{ib},',''',fun_{in},''');'])
+            eval(['ordervars(''',fun{in},'fun',bnd{ib},'''',vec{:},fun{in},'vars',bnd{ib},',''',fun_{in},''',par);'])
         end
     end
 end
 
 % Write Function process1_.m
-cd('tmp')
+cd(par.tmpFolder)
 if strcmp(par.write,'on')
     fid = fopen('process1_.m','w');
     for ib=1:par.nb
@@ -136,7 +136,7 @@ cd('..')
 
 % Write Function process2_.m
 if strcmp(par.write,'on')
-    cd('tmp')
+    cd(par.tmpFolder)
     fid = fopen('process2_.m','w');
     for ib=1:par.nb
         if ib==1
@@ -159,7 +159,7 @@ end
 
 % Write Function xxfun.m
 if strcmp(par.write,'on')
-    cd('tmp')
+    cd(par.tmpFolder)
     fid = fopen('xxfun.m','w');
     
     fprintf(fid,'%s',['SS  = reshape(S,par.ns,par.N);']);fprintf(fid,'\n');
@@ -230,7 +230,7 @@ end
 % Write Function process1fsolve_.m
 % options = optimset('display','off','tolF',1e-15);
 % if strcmp(par.write,'on')
-%     cd('tmp')
+%     cd(par.tmpFolder)
 %     fid = fopen('process1fsolve.m','w');
 %     for ib=1:par.nb
 %         if ib==1
@@ -253,7 +253,7 @@ end
 
 % Write Function verfun.m
 if strcmp(par.write_con,'on')
-    cd('tmp')
+    cd(par.tmpFolder)
     fid = fopen('verfun.m','w');
     fprintf(fid,'%s','function [ver,cst1,BC,BC_,icst,icst_] = verfun(SS,XX,CC,cstv,csts,cstn,bndv,bndn,i1,i2,par) %#ok<INUSL>');fprintf(fid,'\n');
     fprintf(fid,'\n');

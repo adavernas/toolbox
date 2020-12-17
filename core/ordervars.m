@@ -1,4 +1,4 @@
-function fun_ = ordervars(fun,names,short,param,state,dvec,value,vars,varl0,varm1,varm2,varp1,varp2,fvars1,type) %#ok<INUSL,STOUT>
+function fun_ = ordervars(fun,names,short,param,state,dvec,value,vars,varl0,varm1,varm2,varp1,varp2,fvars1,type,par) %#ok<INUSL,STOUT>
 
 if strcmp(type,'{i}')
     if not(isempty(fvars1))
@@ -22,7 +22,7 @@ if strcmp(type,'{i}')
                 end
             end
         end
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par,ind)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_(',vec,');';]);
@@ -30,7 +30,7 @@ if strcmp(type,'{i}')
         cd('..')
         
     else
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par,ind)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_;';]);
@@ -61,7 +61,7 @@ elseif strcmp(type,'(i,:)')
             end
         end
         
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_(',vec,');';]);
@@ -69,7 +69,7 @@ elseif strcmp(type,'(i,:)')
         cd('..')
         
     else
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_;';]);
@@ -100,7 +100,7 @@ elseif strcmp(type,'(i,:,:)')
             end
         end
         
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_(',vec,');';]);
@@ -109,7 +109,7 @@ elseif strcmp(type,'(i,:,:)')
         
     else
         
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_;';]);
@@ -148,7 +148,7 @@ elseif strcmp(type,'(i)')
             end
         end
         
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_(',vec,');';]);
@@ -156,7 +156,7 @@ elseif strcmp(type,'(i)')
         cd('..')
         
     else
-        cd('tmp')
+        cd(par.tmpFolder)
         fid = fopen([fun,'.m'],'w');
         fprintf(fid,'%s',['function F = ',fun,'(P,S,D,V,X,L0,M1,M2,P1,P2,Vone,Vzero,par)']);fprintf(fid,'\n');
         fprintf(fid,'%s',['F = ',fun,'_;';]);
