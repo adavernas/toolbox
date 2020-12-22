@@ -177,6 +177,7 @@ end
 % once inner loop is done, the function HJB computes the coefficients in bellman equations using the values
 % from inner loop
 
+XT1 = X0;
 if loop==1
     X0 = (1-par.damp1)*X0 + par.damp1*XT0;
 end
@@ -205,7 +206,7 @@ if strcmp(par.innerplot,'on')
     drawnow
 end
 
-testK = sum(sum(sum( (XT0 - X0).^2 )));
+testK = sum(sum(sum( (XT0 - XT1).^2 )));
 
 end
 

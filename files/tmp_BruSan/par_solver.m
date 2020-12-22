@@ -43,8 +43,8 @@ vec1b = 0.99;
 vec2a = 0.01;
 vec2b = 0.99;
 
-par.n1 = 30;
-par.n2 = 30; 
+par.n1 = 50;
+par.n2 = 50; 
 
 vec1 = linspace(vec1a,vec1b,par.n1); % linear spacing is generally more stable
 vec2 = linspace(vec2a,vec2b,par.n2);

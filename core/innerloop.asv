@@ -38,7 +38,7 @@ for i1=itervec1
     else
         XX0 = X0(:,i1,i2);
     end
-%     XX0 = XT0(:,i1,i2);
+    XX0 = XT0(:,i1,i2);
     
     iterI = 0;
     testI = 1;

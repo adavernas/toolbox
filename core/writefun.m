@@ -17,13 +17,13 @@ ncc = par.ncc;
 np  = par.np;
  
 if par.ns==1
-all = [param,state,delta,value,vars,vars_,last,varl0,varm1,varp1];
-for i=1:np+ns+nd+nv+nx+nx_+4*nl
+all = [param,state,delta,value,vars,vars_,varl0,varm1,varp1];
+for i=1:np+ns+nd+nv+nx+nx_+3*nl
     eval([all{i},' = sym(''',all{i},''');'])
 end
 elseif par.ns==2
-all = [param,state,delta,value,vars,vars_,last,varl0,varm1,varm2,varp1,varp2];
-for i=1:np+ns+nd+nv+nx+nx_+6*nl
+all = [param,state,delta,value,vars,vars_,varl0,varm1,varm2,varp1,varp2];
+for i=1:np+ns+nd+nv+nx+nx_+5*nl
     eval([all{i},' = sym(''',all{i},''');'])
 end
 end
