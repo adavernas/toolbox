@@ -52,6 +52,8 @@ for il_= 1:par.npr
 end
 
 vars_ = {vars_{:},last{:}};
+latex_ = {latex_{:},last{:}};
+
 par.nx_ = length(vars_);
 
 varm1 = cell(1,par.nl);
@@ -192,14 +194,14 @@ for ip=1:par.npr
     fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'eepe*dme - ',prices{ip},'ee*dme + ',prices{ip},'ee*dpe - ',prices{ip},'eeme*dpe )/(2*dpe*dme);');fprintf(fid,'\n');
     fprintf(fid,'\n');
     fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'e   = (',prices{ip},'pe   - ',prices{ip},'   )/dpe;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'ee  = (',prices{ip},'epe  - ',prices{ip},'e  )/dpe;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'eee = (',prices{ip},'eepe - ',prices{ip},'ee )/dpe;');fprintf(fid,'\n');
+   fprintf(fid,'%s','    ',prices{ip},'e   = ',prices{ip},'epe    - ',prices{ip},'eepe*dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = ',prices{ip},'eepe   - ',prices{ip},'eeepe*dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'eepe - ',prices{ip},'ee )/dpe;');fprintf(fid,'\n');
     fprintf(fid,'\n');
     fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'e   = (',prices{ip},'   - ',prices{ip},'me   )/dpe;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'ee  = (',prices{ip},'e  - ',prices{ip},'eme  )/dpe;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'eee = (',prices{ip},'ee - ',prices{ip},'eeme )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = ',prices{ip},'eme  + ',prices{ip},'eeme*dme;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = ',prices{ip},'eeme + ',prices{ip},'eeeme*dme;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'ee - ',prices{ip},'eeme )/dme;');fprintf(fid,'\n');
     fprintf(fid,'\n');
     fprintf(fid,'%s','end');fprintf(fid,'\n');
     fprintf(fid,'\n');
@@ -209,14 +211,14 @@ for ip=1:par.npr
     fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zzpz*dmz - ',prices{ip},'zz*dmz + ',prices{ip},'zz*dpz - ',prices{ip},'zzmz*dpz )/(2*dpz*dmz);');fprintf(fid,'\n');
     fprintf(fid,'\n');
     fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'z   = (',prices{ip},'pz   - ',prices{ip},'   )/dpe;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'zz  = (',prices{ip},'zpz  - ',prices{ip},'z  )/dpe;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'zzz = (',prices{ip},'zzpz - ',prices{ip},'zz )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ',prices{ip},'zzpz   - ',prices{ip},'zzzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zzpz - ',prices{ip},'zz )/dpz;');fprintf(fid,'\n');
     fprintf(fid,'\n');
     fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'z   = (',prices{ip},'   - ',prices{ip},'mz   )/dpz;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'zz  = (',prices{ip},'z  - ',prices{ip},'zmz  )/dpz;');fprintf(fid,'\n');
-    fprintf(fid,'%s','    ',prices{ip},'zzz = (',prices{ip},'zz - ',prices{ip},'zzmz )/dpz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ',prices{ip},'zmz  + ',prices{ip},'zzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ',prices{ip},'zzmz + ',prices{ip},'zzzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zz - ',prices{ip},'zzmz )/dmz;');fprintf(fid,'\n');
     fprintf(fid,'\n');
     fprintf(fid,'%s','end');fprintf(fid,'\n');
     fprintf(fid,'\n');

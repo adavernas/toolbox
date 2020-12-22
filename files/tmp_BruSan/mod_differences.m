@@ -5,14 +5,14 @@ if str2double(bnd(1))==1
     qeee = ( qeepe*dme - qee*dme + qee*dpe - qeeme*dpe )/(2*dpe*dme);
 
 elseif str2double(bnd(1))==0
-    qe   = (qpe   - q   )/dpe;
-    qee  = (qepe  - qe  )/dpe;
-    qeee = (qeepe - qee )/dpe;
+    qe   = qepe    - qeepe*dpe;
+    qee  = qeepe   - qeeepe*dpe;
+    qeee = ( qeepe - qee )/dpe;
 
 elseif str2double(bnd(1))==2
-    qe   = (q   - qme   )/dpe;
-    qee  = (qe  - qeme  )/dpe;
-    qeee = (qee - qeeme )/dpe;
+    qe   = qeme  + qeeme*dme;
+    qee  = qeeme + qeeeme*dme;
+    qeee = ( qee - qeeme )/dme;
 
 end
 
@@ -22,14 +22,14 @@ if str2double(bnd(2))==1
     qzzz = ( qzzpz*dmz - qzz*dmz + qzz*dpz - qzzmz*dpz )/(2*dpz*dmz);
 
 elseif str2double(bnd(2))==0
-    qz   = (qpz   - q   )/dpe;
-    qzz  = (qzpz  - qz  )/dpe;
-    qzzz = (qzzpz - qzz )/dpe;
+    qz   = 0;
+    qzz  = qzzpz   - qzzzpz*dpz;
+    qzzz = ( qzzpz - qzz )/dpz;
 
 elseif str2double(bnd(2))==2
-    qz   = (q   - qmz   )/dpz;
-    qzz  = (qz  - qzmz  )/dpz;
-    qzzz = (qzz - qzzmz )/dpz;
+    qz   = qzmz  + qzzmz*dmz;
+    qzz  = qzzmz + qzzzmz*dmz;
+    qzzz = ( qzz - qzzmz )/dmz;
 
 end
 
