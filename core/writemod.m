@@ -1,5 +1,24 @@
 
-modfile = regexp(fileread(['mod_',par.name,'.m']),'\n','split');
+par.tmpFolder = ['tmp_',par.name];
+if ~exist(par.tmpFolder, 'dir')
+    mkdir(par.tmpFolder)
+end
+
+path_tmp = regexp(path,';','split');
+if any(find(contains(path_tmp,[pwd,'\tmp_'])))
+    itmp = find(contains(path_tmp,[pwd,'\tmp_']));
+    for ip = 1:length(itmp)
+        rmpath(path_tmp{itmp(ip)});
+    end
+end
+addpath([pwd,'\',par.tmpFolder])
+
+if strcmp(par.search,'off')
+    modfile = regexp(fileread(['mod_',par.name,'.m']),'\n','split');
+elseif strcmp(par.search,'on')
+    modfile = regexp(fileread([par.tmpFolder,'/mod_',par.name,'_search.m']),'\n','split');
+end
+
 parfile = regexp(fileread(['par_',par.name,'.m']),'\n','split');
 
 linepar = find(contains(modfile,'%% PARAMETERS'));
@@ -9,12 +28,7 @@ linemod = find(contains(modfile,'%% MODEL'));
 linecon = find(contains(modfile,'%% CONSTRAINTS'));
 linesol = find(contains(parfile,'%% SOLVER PARAMETERS'));
 
-par.tmpFolder = ['tmp_',par.name];
-if ~exist(par.tmpFolder, 'dir')
-    mkdir(par.tmpFolder)
-end
 cd(par.tmpFolder)
-
 fid = fopen('mod_parameters.m','w');
 for i=linepar+1:linevar-1
     fprintf(fid,'%s',modfile{i});
@@ -58,4 +72,3 @@ end
 fclose(fid);
 
 cd ..
-addpath([pwd,'/',par.tmpFolder])

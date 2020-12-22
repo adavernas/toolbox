@@ -10,7 +10,6 @@ param = {'gammai','ai','ah','rhoi','rhoh','sigz','vbar','deltai','deltah',...
          'A', 'B'};
 par.gammai = 5;
 
-
 par.sigz   = 0.05;
 par.vbar = 0.10;
 
@@ -47,9 +46,8 @@ par.sigma  = 0.0125; %aggregate Brownian, constant in the model
 state  = {'e','z'};
 dvec   = {'dme','dmz','dpe','dpz','dae','daz'};
 value  = {'vi','vei','vzi','vh','veh','vzh'};
-
-
 vars   = {'q','mue','sigw', 'sigx','theta'};
+prices = {'q'};
 
 % all secondary variables are put in vars_ MATLAB variable; these secondary variables are computed from
 % the endogenous variables in vars; the mapping is given in the paper and
@@ -67,13 +65,8 @@ vars_  = {'qe', 'qee', ...
 
 vplot_ = {'vi'};
 
-last   = {'q',...
-          'qe', 'qee', 'qeee',...
-          'qz', 'qzz', 'qzzz',...
-          'qez','qeze','qezz'};
 % these are the latex symbols used for graphs
 latex  = {'$q$','$\mu^{\eta}$','$\sigma^w$','$\sigma^x$','$\theta$'};
-
 
 latex_ ={'$q_\eta$','$q_{\overline{\eta}}$','$q_{\eta\eta}$','$q_{\overline{\eta}\overline{\eta}}$',...
           '$q_{{\eta}\overline{\eta}}$','$q_{\eta\overline{\eta}\eta}$','$q_{\eta\overline{\eta}\overline{\eta}}$',...
@@ -87,9 +80,6 @@ latex_ ={'$q_\eta$','$q_{\overline{\eta}}$','$q_{\eta\eta}$','$q_{\overline{\eta
           'pii', 'iotai', 'v', 'x', 'k', 'sigq'};
 
 latexv = {'$v^i$','$v_\eta^i$','$v_z^i$','$v^h$','$v_\eta^h$','$v_z^h$'};
-
-
-
 
 %% GUESS
 X0 = NaN([par.nx par.dim]);

@@ -14,16 +14,45 @@ end
     
 all = [state,value,vars,vars_];
 par.np  = length(param);
+par.npr = length(prices);
 par.nd  = length(dvec);
 par.nv  = length(value);
 par.nx  = length(vars);
-par.nx_ = length(vars_);
-par.nl  = length(last);
 par.ncc = length(cstv);
 par.nb  = 3^par.ns+1;
 par.vc  = 2^par.ncc;
 par.nvc = 2^(par.ns + par.ncc);
 par.Nk   = prod(par.dim);
+
+if par.ns==2
+    par.nl = par.npr*10;
+end
+
+last = cell(1,par.nl);
+il = 0;
+for il_= 1:par.npr
+    il = il+1;
+    eval(['last{il} = ''',prices{il_},''';']);
+    for is=1:par.ns
+        il = il+1;
+        eval(['last{il} = ''',prices{il_},state{is},''';']);
+        il = il+1;
+        eval(['last{il} = ''',prices{il_},state{is},state{is},''';']);
+        il = il+1;
+        eval(['last{il} = ''',prices{il_},state{is},state{is},state{is},''';']);
+    end
+    if par.ns==2
+        il = il+1;
+        eval(['last{il} = ''',prices{il_},state{1},state{2},''';']);
+        il = il+1;
+        eval(['last{il} = ''',prices{il_},state{1},state{2},state{1},''';']);
+        il = il+1;
+        eval(['last{il} = ''',prices{il_},state{1},state{2},state{2},''';']);
+    end
+end
+
+vars_ = {vars_{:},last{:}};
+par.nx_ = length(vars_);
 
 varm1 = cell(1,par.nl);
 varm2 = cell(1,par.nl);
@@ -31,7 +60,7 @@ varm2 = cell(1,par.nl);
 for il=1:par.nl
 	eval(['varl0{il} = ''',last{il},'l0'';']);
 end
-    
+
 for is=1:par.ns
     for il=1:par.nl
         eval(['varm',num2str(is),'{il} = ''',last{il},'m',state{is},''';']);
@@ -54,6 +83,208 @@ for j=1:length(names_)
     end
 end
 
+% Write Function differences_.m
+cd(par.tmpFolder)
+fid = fopen('mod_differences.m','w');
+if strcmp(par.method,'first_order')
+for ip=1:par.npr
+    fprintf(fid,'%s','% differences for price ',prices{ip});fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(1))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = ( ',prices{ip},'pe*dme   - ',prices{ip},'*dme   + ',prices{ip},'*dpe   - ',prices{ip},'me*dpe   )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = ( ',prices{ip},'epe*dme  - ',prices{ip},'e*dme  + ',prices{ip},'e*dpe  - ',prices{ip},'eme*dpe  )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'eepe*dme - ',prices{ip},'ee*dme + ',prices{ip},'ee*dpe - ',prices{ip},'eeme*dpe )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = ',prices{ip},'epe    - ',prices{ip},'eepe*dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = ',prices{ip},'eepe   - ',prices{ip},'eeepe*dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'eepe - ',prices{ip},'ee )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = ',prices{ip},'eme  + ',prices{ip},'eeme*dme;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = ',prices{ip},'eeme + ',prices{ip},'eeeme*dme;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'ee - ',prices{ip},'eeme )/dme;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(2))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ( ',prices{ip},'pz*dmz   - ',prices{ip},'*dmz   + ',prices{ip},'*dpz   - ',prices{ip},'mz*dpz  )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ( ',prices{ip},'zpz*dmz  - ',prices{ip},'z*dmz  + ',prices{ip},'z*dpz  - ',prices{ip},'zmz*dpz )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zzpz*dmz - ',prices{ip},'zz*dmz + ',prices{ip},'zz*dpz - ',prices{ip},'zzmz*dpz )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ',prices{ip},'zpz    - ',prices{ip},'zzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ',prices{ip},'zzpz   - ',prices{ip},'zzzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zzpz - ',prices{ip},'zz )/dpz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ',prices{ip},'zmz  + ',prices{ip},'zzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ',prices{ip},'zzmz + ',prices{ip},'zzzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zz - ',prices{ip},'zzmz )/dmz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(1))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ze_ = ( ',prices{ip},'zpe*dme - ',prices{ip},'z*dme + ',prices{ip},'z*dpe - ',prices{ip},'zme*dpe)/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ze_ = ',prices{ip},'ezpe - ',prices{ip},'ezepe*dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ze_ = ',prices{ip},'ezme + ',prices{ip},'ezeme*dme;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(2))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez_ = ( ',prices{ip},'epz*dmz - ',prices{ip},'e*dmz + ',prices{ip},'e*dpz - ',prices{ip},'emz*dpz)/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez_  = ',prices{ip},'ezpz - ',prices{ip},'ezzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez_  = ',prices{ip},'ezmz + ',prices{ip},'ezzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if and(str2double(bnd(1))==3,str2double(bnd(2))==3)');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = 0;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = 0;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez  = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz = 0;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','else');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez = 1/2*',prices{ip},'ez_ + 1/2*',prices{ip},'ze_;');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(1))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze  = ( ',prices{ip},'ezpe*dme - ',prices{ip},'ez*dme  + ',prices{ip},'ez*dpe  - ',prices{ip},'ezme*dpe  )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze  = ( ',prices{ip},'ezpe - ',prices{ip},'ez  )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze  = ( ',prices{ip},'ez - ',prices{ip},'ezme  )/dme;');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(2))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz  = ( ',prices{ip},'ezpz*dmz - ',prices{ip},'ez*dmz  + ',prices{ip},'ez*dpz  - ',prices{ip},'ezmz*dpz  )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz  = ( ',prices{ip},'ezpz - ',prices{ip},'ez  )/dpz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz  = ( ',prices{ip},'ez - ',prices{ip},'ezmz  )/dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+end
+elseif strcmp(par.method,'forward')
+for ip=1:par.npr
+    fprintf(fid,'%s','% differences for price ',prices{ip});fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(1))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = ( ',prices{ip},'pe*dme   - ',prices{ip},'*dme   + ',prices{ip},'*dpe   - ',prices{ip},'me*dpe   )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = ( ',prices{ip},'epe*dme  - ',prices{ip},'e*dme  + ',prices{ip},'e*dpe  - ',prices{ip},'eme*dpe  )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = ( ',prices{ip},'eepe*dme - ',prices{ip},'ee*dme + ',prices{ip},'ee*dpe - ',prices{ip},'eeme*dpe )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = (',prices{ip},'pe   - ',prices{ip},'   )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = (',prices{ip},'epe  - ',prices{ip},'e  )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = (',prices{ip},'eepe - ',prices{ip},'ee )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = (',prices{ip},'   - ',prices{ip},'me   )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = (',prices{ip},'e  - ',prices{ip},'eme  )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = (',prices{ip},'ee - ',prices{ip},'eeme )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(2))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ( ',prices{ip},'pz*dmz   - ',prices{ip},'*dmz   + ',prices{ip},'*dpz   - ',prices{ip},'mz*dpz  )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ( ',prices{ip},'zpz*dmz  - ',prices{ip},'z*dmz  + ',prices{ip},'z*dpz  - ',prices{ip},'zmz*dpz )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zzpz*dmz - ',prices{ip},'zz*dmz + ',prices{ip},'zz*dpz - ',prices{ip},'zzmz*dpz )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ',prices{ip},'zpz    - ',prices{ip},'zzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ',prices{ip},'zzpz   - ',prices{ip},'zzzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zzpz - ',prices{ip},'zz )/dpz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = ',prices{ip},'zmz  + ',prices{ip},'zzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = ',prices{ip},'zzmz + ',prices{ip},'zzzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = ( ',prices{ip},'zz - ',prices{ip},'zzmz )/dmz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(1))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ze_ = ( ',prices{ip},'zpe*dme - ',prices{ip},'z*dme + ',prices{ip},'z*dpe - ',prices{ip},'zme*dpe)/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ze_ = ',prices{ip},'ezpe - ',prices{ip},'ezepe*dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ze_ = ',prices{ip},'ezme + ',prices{ip},'ezeme*dme;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(2))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez_ = ( ',prices{ip},'epz*dmz - ',prices{ip},'e*dmz + ',prices{ip},'e*dpz - ',prices{ip},'emz*dpz)/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez_  = ',prices{ip},'ezpz - ',prices{ip},'ezzpz*dpz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez_  = ',prices{ip},'ezmz + ',prices{ip},'ezzmz*dmz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if and(str2double(bnd(1))==3,str2double(bnd(2))==3)');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'e   = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ee  = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eee = 0;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'z   = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zz  = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'zzz = 0;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez  = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze = 0;');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz = 0;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','else');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ez = 1/2*',prices{ip},'ez_ + 1/2*',prices{ip},'ze_;');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(1))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze  = ( ',prices{ip},'ezpe*dme - ',prices{ip},'ez*dme  + ',prices{ip},'ez*dpe  - ',prices{ip},'ezme*dpe  )/(2*dpe*dme);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze  = ( ',prices{ip},'ezpe - ',prices{ip},'ez  )/dpe;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(1))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'eze  = ( ',prices{ip},'ez - ',prices{ip},'ezme  )/dme;');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','if str2double(bnd(2))==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz  = ( ',prices{ip},'ezpz*dmz - ',prices{ip},'ez*dmz  + ',prices{ip},'ez*dpz  - ',prices{ip},'ezmz*dpz  )/(2*dpz*dmz);');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==0');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz  = ( ',prices{ip},'ezpz - ',prices{ip},'ez  )/dpz;');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif str2double(bnd(2))==2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    ',prices{ip},'ezz  = ( ',prices{ip},'ez - ',prices{ip},'ezmz  )/dmz;');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
+    fprintf(fid,'\n');
+end
+end
+fclose(fid);
+cd('..')
+
+% Write System and Jacobian
 if strcmp(par.write,'on')
     fun  = {'dF','F','X','L','CC'};
     fun_ = {'(i)','(i)','(i,:)','(i)','(i)'};
@@ -107,6 +338,8 @@ end
 cd(par.tmpFolder)
 if strcmp(par.write,'on')
     fid = fopen('process1_.m','w');
+    fprintf(fid,'%s','function [myfun,dFF,FF] = process1_(XX0,P,Stmp,Dtmp,V0tmp,L0tmp,M1tmp,M2tmp,P1tmp,P2tmp,vtmp,par)');fprintf(fid,'\n');
+
     for ib=1:par.nb
         if ib==1
             fprintf(fid,'%s',['if vtmp==',num2str(base2dec(bnd{ib},par.base)+1)]);fprintf(fid,'\n');
@@ -138,6 +371,8 @@ cd('..')
 if strcmp(par.write,'on')
     cd(par.tmpFolder)
     fid = fopen('process2_.m','w');
+    fprintf(fid,'%s','function L = process2_(P,Stmp,Dtmp,V0tmp,XX0,L0tmp,M1tmp,M2tmp,P1tmp,P2tmp,vtmp,par)');fprintf(fid,'\n');
+
     for ib=1:par.nb
         if ib==1
             fprintf(fid,'%s',['if vtmp==',num2str(base2dec(bnd{ib},par.base)+1)]);fprintf(fid,'\n');
@@ -146,7 +381,7 @@ if strcmp(par.write,'on')
         elseif ib==par.nb
             fprintf(fid,'%s','elseif vtmp==0');fprintf(fid,'\n');
         end
-        fprintf(fid,'%s',['    L(:,i1,i2) = Lfun',bnd{ib},'(P,Stmp,Dtmp,V0tmp,XX0,L0tmp,M1tmp,M2tmp,P1tmp,P2tmp,1,0,par);']);
+        fprintf(fid,'%s',['    L = Lfun',bnd{ib},'(P,Stmp,Dtmp,V0tmp,XX0,L0tmp,M1tmp,M2tmp,P1tmp,P2tmp,1,0,par);']);
         fprintf(fid,'\n');
         if ib==par.nb
             fprintf(fid,'%s','end');fprintf(fid,'\n');
@@ -188,36 +423,38 @@ if strcmp(par.write,'on')
         fprintf(fid,'%s',['XX_  = reshape(X_,par.nx_,par.N);']);fprintf(fid,'\n');
         
     elseif par.ns==2
-        fprintf(fid,'%s',['XX_ = Xfun11(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par);']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_ = squeeze(reshape(XX_,[par.nx_ par.dim]));']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','XX_ = Xfun11(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par);');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_ = squeeze(reshape(XX_,[par.nx_ par.dim]));');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun00(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,1,1) = Xtmp(:,1,1);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun00(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,1,1) = Xtmp(:,1,1);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun01(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,1,2:end-1) = Xtmp(:,1,2:end-1);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun01(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,1,2:end-1) = Xtmp(:,1,2:end-1);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun02(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,1,end) = Xtmp(:,1,end);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun02(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,1,end) = Xtmp(:,1,end);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun10(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,2:end-1,1) = Xtmp(:,2:end-1,1);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun10(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,2:end-1,1) = Xtmp(:,2:end-1,1);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun12(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,2:end-1,end) = Xtmp(:,2:end-1,end);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun12(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,2:end-1,end) = Xtmp(:,2:end-1,end);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun20(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,end,1) = Xtmp(:,end,1);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun20(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,end,1) = Xtmp(:,end,1);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun21(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,end,2:end-1) = Xtmp(:,end,2:end-1);']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun21(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,end,2:end-1) = Xtmp(:,end,2:end-1);');fprintf(fid,'\n');fprintf(fid,'\n');
         
-        fprintf(fid,'%s',['Xtmp = squeeze(reshape(Xfun22(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['X_(:,end,end) = Xtmp(:,end,end);']);fprintf(fid,'\n');fprintf(fid,'\n');
-        
-        fprintf(fid,'%s',['if vtmp==0']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['    X_ = squeeze(reshape(Xfun33(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));']);fprintf(fid,'\n');
-        fprintf(fid,'%s',['end']);fprintf(fid,'\n');fprintf(fid,'\n');
+        fprintf(fid,'%s','Xtmp = squeeze(reshape(Xfun22(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','X_(:,end,end) = Xtmp(:,end,end);');fprintf(fid,'\n');fprintf(fid,'\n');
+    
+        fprintf(fid,'%s','if strcmp(par.loop,''on'')');fprintf(fid,'\n');
+        fprintf(fid,'%s','if loop==1');fprintf(fid,'\n');
+        fprintf(fid,'%s','    X_ = squeeze(reshape(Xfun33(P,SS,DD,VV,XX,LL0,MM1,MM2,PP1,PP2,ones(1,par.N),zeros(1,par.N),par),[par.nx_ par.dim]));');fprintf(fid,'\n');
+        fprintf(fid,'%s','end');fprintf(fid,'\n');
+        fprintf(fid,'%s','end');fprintf(fid,'\n');fprintf(fid,'\n');
         
         fprintf(fid,'%s',['XX_  = reshape(X_,par.nx_,par.N);']);fprintf(fid,'\n');
         
@@ -227,102 +464,77 @@ if strcmp(par.write,'on')
     cd('..')
 end
 
-% Write Function process1fsolve_.m
-% options = optimset('display','off','tolF',1e-15);
-% if strcmp(par.write,'on')
-%     cd(par.tmpFolder)
-%     fid = fopen('process1fsolve.m','w');
-%     for ib=1:par.nb
-%         if ib==1
-%             fprintf(fid,'%s',['if vtmp==',num2str(base2dec(bnd{ib},par.base)+1)]);fprintf(fid,'\n');
-%         elseif ib<par.nb
-%             fprintf(fid,'%s',['elseif vtmp==',num2str(base2dec(bnd{ib},par.base)+1)]);fprintf(fid,'\n');
-%         elseif ib==par.nb
-%             fprintf(fid,'%s','elseif vtmp==0');fprintf(fid,'\n');
-%         end
-%         fprintf(fid,'%s',['    X1  =  fmincon(@(XX)sum(Ffun',bnd{ib},'(P,Stmp,Dtmp,V0tmp,XX,L0tmp,M1tmp,M2tmp,P1tmp,P2tmp,1,0,par).^2),XX0,A,B_,[],[],[],[],[],options);']);
-%         fprintf(fid,'\n');
-%         if ib==par.nb
-%             fprintf(fid,'%s','end');fprintf(fid,'\n');
-%         end
-%         fprintf(fid,'\n');
-%     end
-%     fclose(fid);
-%     cd('..')
-% end
-
 % Write Function verfun.m
-if strcmp(par.write_con,'on')
-    cd(par.tmpFolder)
-    fid = fopen('verfun.m','w');
-    fprintf(fid,'%s','function [ver,cst1,BC,BC_,icst,icst_] = verfun(SS,XX,CC,cstv,csts,cstn,bndv,bndn,i1,i2,par) %#ok<INUSL>');fprintf(fid,'\n');
+cd(par.tmpFolder)
+fid = fopen('verfun.m','w');
+fprintf(fid,'%s','function [ver,cst1,BC,BC_,icst,icst_] = verfun(SS,XX,CC,cstv,csts,cstn,bndv,bndn,i1,i2,par) %#ok<INUSL>');fprintf(fid,'\n');
+fprintf(fid,'\n');
+fprintf(fid,'%s','e  = SS(1);');fprintf(fid,'\n');
+fprintf(fid,'\n');
+if par.ns>1
+    fprintf(fid,'%s','z  = SS(2);');fprintf(fid,'\n');
     fprintf(fid,'\n');
-    fprintf(fid,'%s','e  = SS(1);');fprintf(fid,'\n');
-    fprintf(fid,'\n');
-    if par.ns>1
-        fprintf(fid,'%s','z  = SS(2);');fprintf(fid,'\n');
-        fprintf(fid,'\n');
-        
-        fprintf(fid,'%s','if i1==1');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd1 = ''0'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','elseif i1==par.n1');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd1 = ''2'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','else');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd1 = ''1'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','end');fprintf(fid,'\n');
-        fprintf(fid,'\n');
-        fprintf(fid,'%s','if i2==1');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd2 = ''0'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','elseif i2==par.n2');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd2 = ''2'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','else');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd2 = ''1'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','end');fprintf(fid,'\n');
-        fprintf(fid,'\n');
-        fprintf(fid,'%s','bnd = [bnd1,bnd2];');fprintf(fid,'\n');
-        fprintf(fid,'\n');
-        fprintf(fid,'%s','ver = base2dec(bnd,par.base)+1;');
-        fprintf(fid,'\n');
-    elseif par.ns==1
-        fprintf(fid,'%s','if i1==1');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd = ''0'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','elseif i1==par.n1');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd = ''2'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','else');fprintf(fid,'\n');
-        fprintf(fid,'%s','    bnd = ''1'';');fprintf(fid,'\n');
-        fprintf(fid,'%s','end');fprintf(fid,'\n');
-        fprintf(fid,'\n');
-        fprintf(fid,'%s','ver = base2dec(bnd,par.base)+1;');
-        fprintf(fid,'\n');
-    end
     
+    fprintf(fid,'%s','if i1==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd1 = ''0'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif i1==par.n1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd1 = ''2'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','else');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd1 = ''1'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
     fprintf(fid,'\n');
-    fprintf(fid,'%s','cst1  = NaN(par.ncc,1);');fprintf(fid,'\n');
+    fprintf(fid,'%s','if i2==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd2 = ''0'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif i2==par.n2');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd2 = ''2'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','else');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd2 = ''1'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
     fprintf(fid,'\n');
-    for icc=1:par.ncc
-        if strcmp(csts{icc},'max')
-            eq1 = '<';
-            eq2 = '>';
-        elseif strcmp(csts{icc},'min')
-            eq1 = '>';
-            eq2 = '<';
-        end
-        
-        fprintf(fid,'%s',['cst1(',num2str(icc),') = not(XX(par.X.i',cstv{icc},')',eq1,cstn{icc},');']);fprintf(fid,'\n');
-        fprintf(fid,'\n');
-    end
-    
-    % Setup Constaint Control
-    fprintf(fid,'%s','icst  = NaN(par.ncc,1);');
+    fprintf(fid,'%s','bnd = [bnd1,bnd2];');fprintf(fid,'\n');
     fprintf(fid,'\n');
-    fprintf(fid,'%s','icst_ = NaN(par.ncc,1);');
+    fprintf(fid,'%s','ver = base2dec(bnd,par.base)+1;');
     fprintf(fid,'\n');
-    fprintf(fid,'%s','BC    = NaN(par.ncc,1);');
+elseif par.ns==1
+    fprintf(fid,'%s','if i1==1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd = ''0'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','elseif i1==par.n1');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd = ''2'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','else');fprintf(fid,'\n');
+    fprintf(fid,'%s','    bnd = ''1'';');fprintf(fid,'\n');
+    fprintf(fid,'%s','end');fprintf(fid,'\n');
     fprintf(fid,'\n');
-    fprintf(fid,'%s','BC_   = NaN(par.ncc,1);');
+    fprintf(fid,'%s','ver = base2dec(bnd,par.base)+1;');
     fprintf(fid,'\n');
+end
 
-    for icc=1:par.ncc
+fprintf(fid,'\n');
+fprintf(fid,'%s','cst1  = NaN(par.ncc,1);');fprintf(fid,'\n');
+fprintf(fid,'\n');
+for icc=1:par.ncc
+    if strcmp(csts{icc},'max')
+        eq1 = '<';
+        eq2 = '>';
+    elseif strcmp(csts{icc},'min')
+        eq1 = '>';
+        eq2 = '<';
+    end
+    
+    fprintf(fid,'%s',['cst1(',num2str(icc),') = not(XX(par.X.i',cstv{icc},')',eq1,cstn{icc},');']);fprintf(fid,'\n');
+    fprintf(fid,'\n');
+end
+
+% Setup Constaint Control
+fprintf(fid,'%s','icst  = NaN(par.ncc,1);');
+fprintf(fid,'\n');
+fprintf(fid,'%s','icst_ = NaN(par.ncc,1);');
+fprintf(fid,'\n');
+fprintf(fid,'%s','BC    = NaN(par.ncc,1);');
+fprintf(fid,'\n');
+fprintf(fid,'%s','BC_   = NaN(par.ncc,1);');
+fprintf(fid,'\n');
+
+for icc=1:par.ncc
     fprintf(fid,'\n');
     fprintf(fid,'%s','icst(',num2str(icc),')   = par.X.i',cstv{icc},';');
     fprintf(fid,'\n');
@@ -332,14 +544,13 @@ if strcmp(par.write_con,'on')
     fprintf(fid,'\n');
     fprintf(fid,'%s','BC_(',num2str(icc),')  = ',cstn_{icc},';');
     fprintf(fid,'\n');
-    end
-    fprintf(fid,'\n');
-    fprintf(fid,'\n');
-    
-    fclose(fid);
-
-    cd('..')
 end
+fprintf(fid,'\n');
+fprintf(fid,'\n');
+
+fclose(fid);
+
+cd('..')
 
 %% State Variables
 dp1 = vec1(2:par.n1) - vec1(1:par.n1-1); % diff upward

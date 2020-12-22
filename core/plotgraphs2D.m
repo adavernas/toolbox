@@ -5,8 +5,13 @@ bb2 = par.n2;
 cc = 0.99;
 dd = 1;
 
-va = -50;
-vb = 25;
+if strcmp(par.dimensions,'2D')
+    va = -50;
+    vb = 25;
+elseif  strcmp(par.dimensions,'1D')
+    va = 0;
+    vb = 0;
+end
 
 vec1_g  = vec1;
 vec2_g  = vec2;
@@ -15,9 +20,9 @@ vec2_g  = vec2;
 nlin = floor(sqrt(par.nx));
 ncol = ceil((par.nx)/nlin);
 
-figure(1); clf(1);
+figure(1);
 for h=1:par.nx
-    subplot(nlin,ncol,h); hold on
+    subplot(nlin,ncol,h);
     
     eval(['Zq  = squeeze(X0(par.X.i',vars{h},',:,:));'])
     
@@ -42,7 +47,7 @@ if ~isempty(vplot_)
 nlin = floor(sqrt(length(vplot_)));
 ncol = ceil((length(vplot_))/nlin);
 
-figure(2); clf(2);
+figure(2);
 hh_ = 0;
 for h=1:par.nx
 if  any(ismember(vplot_,vars{h}))
@@ -83,7 +88,7 @@ if  any(ismember(vplot_,vars_{h_}))
     
     xlabel('$\eta$','Interpreter','LateX');
 
-    title(['$',latex_{h_},'$'],'Interpreter','LateX');
+    title(['$',latex_{h_},'$'],'Interpreter','LateX')
     set(gca,'FontSize',16)
     xlim([vec1(aa1) vec1(bb1)]);
     ylim([vec2(aa2) vec2(bb2)]); 
@@ -95,7 +100,7 @@ end
 for v=1:par.nv
 if  any(ismember(vplot_,value{v}))
     hh_ = hh_+1;
-    subplot(nlin,ncol,hh_); hold on
+    subplot(nlin,ncol,hh_);
     
     eval(['Zq  = squeeze(V0(par.V.i',value{v},',:,:));'])
     
@@ -117,13 +122,13 @@ end
 end
 end
 
-if strcmp(par.plotall,'on')
+if strcmp(par.allplot,'on')
 nlin = floor(sqrt(par.nx_));
 ncol = ceil((par.nx_)/nlin);
 
-figure(3); clf(3);
+figure(3);
 for h_=1:par.nx_
-    subplot(nlin,ncol,h_); hold on
+    subplot(nlin,ncol,h_);
     
     eval(['Zq  = squeeze(X_(par.X_.i',vars_{h_},',:,:));'])
     
@@ -146,9 +151,9 @@ end
 nlin = floor(sqrt(par.nv));
 ncol = ceil((par.nv)/nlin);
 
-figure(4); clf(4);
+figure(4);
 for v=1:par.nv
-    subplot(nlin,ncol,v); hold on
+    subplot(nlin,ncol,v);
     
     eval(['Zq  = squeeze(V0(par.V.i',value{v},',:,:));'])
     

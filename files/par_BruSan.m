@@ -1,12 +1,5 @@
 %% SOLVER PARAMETERS
 
-par.dispT = 1;
-
-par.write_con   = 'on';
-par.plotall     = 'off';
-par.savegraph   = 'off';
-par.savegraph   = 'on';
-
 % STATIC LOOP
 par.minI = 2;    % necessary for the constraints to have time to adjust
 par.maxI = 10000;
@@ -17,11 +10,11 @@ par.minK = 2;
 par.maxK = 100;
 par.tolK = 1e-4;
 
-par.damp1 = 0.1;
+par.damp1 = 0.5;
 par.damp1_ = 0.0;
 par.dampm1 = 0.0;
 
-par.damp2 = 0.1;
+par.damp2 = 0.5;
 par.damp2_ = 0.0;
 par.dampm2 = 0.0;
 
@@ -51,8 +44,8 @@ vec1b = 0.99;
 vec2a = 0.01;
 vec2b = 0.99;
 
-par.n1 = 16;
-par.n2 = 16; 
+par.n1 = 30;
+par.n2 = 30; 
 
 vec1 = linspace(vec1a,vec1b,par.n1); % linear spacing is generally more stable
 vec2 = linspace(vec2a,vec2b,par.n2);

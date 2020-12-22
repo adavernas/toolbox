@@ -34,8 +34,8 @@ par.tolT = 0.01;
 
 % with implicit method, dt can be large; however, it cannot be too big since we use guesses in the static
 % loop; if there are convergence issues, reduce dt and try again; dt2 should be small
-par.dt  = 1; 
-par.dt2 = 1;
+par.dt  = 10; 
+par.dt2 = 10;
 
 % STENCIL
 par.maxD = 1000;
@@ -51,8 +51,8 @@ vec1b = 0.99;
 vec2a = 0.01;
 vec2b = 0.99;
 
-par.n1 = 16;
-par.n2 = 16; 
+par.n1 = 30;
+par.n2 = 30; 
 
 vec1 = linspace(vec1a,vec1b,par.n1); % linear spacing is generally more stable
 vec2 = linspace(vec2a,vec2b,par.n2);

@@ -1,10 +1,23 @@
-function [] = solvemod(name,varargin)
+function solvemod(name,varargin)
 % This file computes the solution method of d'Avernas and Vandeweyer (2018)
 % written by Adrien d'Avernas
 % 2019 d'Avernas and Vandeweyer all rights reserved
 
 set(0,'DefaultFigureWindowStyle','docked')
 warning('off','MATLAB:interp2:NaNstrip') 
+
+if any(strcmp(varargin,'parrallel'))
+    default_parrallel = 'off';
+elseif ~any(strcmp(varargin,'dimensions'))
+    default_parrallel = 'on';
+elseif any(strcmp(varargin,'dimensions'))
+    ii = find(strcmp(varargin,'dimensions'));
+    if strcmp(varargin{ii+1},'2D')
+        default_parrallel = 'on';
+    elseif strcmp(varargin{ii+1},'1D')
+        default_parrallel = 'off';
+    end
+end
 
 p = inputParser;
 addRequired(p,'name',@ischar);
@@ -13,19 +26,25 @@ addParameter(p,'guess','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'dimensions','2D',@(x) any(validatestring(x,{'1D','2D'})));
 addParameter(p,'innerplot','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'outerplot','off',@(x) any(validatestring(x,{'on','off'})));
+addParameter(p,'allplot','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'debug','off',@(x) any(validatestring(x,{'on','off'})));
+addParameter(p,'parrallel',default_parrallel,@(x) any(validatestring(x,{'on','off'})));      
+addParameter(p,'loop','off',@(x) any(validatestring(x,{'on','off'})));      
+addParameter(p,'search','off',@(x) any(validatestring(x,{'on','off'})));
+addParameter(p,'savegraph','off',@(x) any(validatestring(x,{'on','off'})));
+addParameter(p,'method','first_order',@(x) any(validatestring(x,{'first_order','forward'})));
+addParameter(p,'dispT',10,@isinteger);
+addParameter(p,'HJBupdate','on',@(x) any(validatestring(x,{'on','off'})));
 
 parse(p,name,varargin{:});
 
 par = p.Results;
-if strcmp(par.guess,'on')
-    par.loop = 'off';
-else
-    par.loop = 'on';
-end
 if strcmp(par.debug,'on')
     dbstop if error
     dbstop if warning
+elseif strcmp(par.debug,'off')
+    dbclear if error
+    dbclear if warning
 end
     
 %% Write Functions
@@ -146,120 +165,13 @@ end
 end
 
 XT0 = X0;
-LT0 = L;
+L0 = L;
 
 % INNER LOOP: the following part of code solves the set of non-linear equations for the inner loop
-%% Newton-Raphson Method
-if strcmp(par.dimensions,'2D')
-    itervec{1} = 1:par.dim(1);
-    itervec{2} = 1:par.dim(2);
-elseif strcmp(par.dimensions,'1D')
-    itervec{1} = 1:par.dim(1);
-    itervec{2} = par.nextr+1;
-end
-
-for i2=itervec{2}
-for i1=itervec{1}
-        
-    L0 = LT0;
-    
-    if i1>1
-        M1(:,i1,i2) = L0(:,i1-1,i2);  %#ok<AGROW>
-    elseif i1==1
-        M1(:,i1,i2) = NaN;  %#ok<AGROW>
-    end
-
-    if i1<par.n1
-        P1(:,i1,i2) = L0(:,i1+1,i2);  %#ok<AGROW>
-    elseif i1==par.n1
-        P1(:,i1,i2) = NaN;  %#ok<AGROW>
-    end
-    
-    if i2>1
-        M2(:,i1,i2) = L0(:,i1,i2-1);  %#ok<AGROW>
-    elseif i2==1
-        M2(:,i1,i2) = NaN;  %#ok<AGROW>
-    end
-    
-    if i2<par.n2
-        P2(:,i1,i2) = L0(:,i1,i2+1);  %#ok<AGROW>
-    elseif i2==par.n1
-        P2(:,i1,i2) = NaN;  %#ok<AGROW>
-    end
-    
-    if i1>1
-        XX0 = X0(:,i1-1,i2);
-    else
-        XX0 = X0(:,i1,i2);
-    end
-    
-    iterI = 0;
-    testI = 1;
-
-    X1    = XX0;
-    Stmp  = S(:,i1,i2);
-    Dtmp  = D(:,i1,i2);
-    V0tmp = V0(:,i1,i2);
-    L0tmp = L0(:,i1,i2);
-    M1tmp = M1(:,i1,i2);
-    M2tmp = M2(:,i1,i2);
-    P1tmp = P1(:,i1,i2);
-    P2tmp = P2(:,i1,i2);
-    CCtmp = NaN;
-    COtmp = NaN; 
-    
-    [vtmp,~,BC,BC_,icst,icst_] = verfun(Stmp,XX0,NaN(par.ncc,1),cstv,csts,cstn,bndv,bndn,i1,i2,par);
-      
-    if strcmp(par.loop,'on')
-    if loop==1
-        vtmp = 0;
-    end
-    end
-        
-    ctmp1 = zeros(par.ncc,1);
-    while or(iterI<par.minI,and(testI>=par.tolI,iterI<par.maxI))
-        iterI = iterI+1;
-
-        process1_
-        
-        ix = and(not(ismember(1:par.nx,icst(ctmp1==1))),not(ismember(1:par.nx,icst_(ctmp1==1))));
-        
-        if rcond(dFF(ix,ix))<1e-16
-            disp(['rank not full at ',num2str(i1),' ',num2str(i2)])
-        end
-        
-        % Precondition Inversion
-        XdFF = diag(1./sum(abs(dFF(ix,ix)),1));
-        IdFF = XdFF/(dFF(ix,ix)*XdFF);
-        
-        X1(ix) = XX0(ix) - IdFF*FF(ix);
-        
-        if iterI>par.minI-1
-            [vtmp,ctmp1,BC,BC_,icst,icst_] = verfun(Stmp,X1,NaN(par.ncc,1),cstv,csts,cstn,bndv,bndn,i1,i2,par);
-        end
-        
-        if strcmp(par.loop,'on')
-        if loop==1
-            vtmp = 0;
-        end
-        end
-      
-        X1(icst(ctmp1==1))  = BC(ctmp1==1);
-        X1(icst_(ctmp1==1)) = BC_(ctmp1==1);
-        
-        testI = norm(FF(ix));
-        
-        dFF_ = dFF;
-        FF_  = FF;
-        XX0_ = XX0;
-        XX0  = real(X1);
-
-    end
-    
-    process2_
-    
-    X0(:,i1,i2) = XX0;
-end
+if strcmp(par.parrallel,'off')
+    innerloop
+elseif strcmp(par.parrallel,'on')
+    innerloop_par
 end
 
 % once inner loop is done, the function HJB computes the coefficients in bellman equations using the values
@@ -297,18 +209,13 @@ testK = sum(sum(sum( (XT0 - X0).^2 )));
 
 end
 
-if strcmp(par.loop,'on')
 if loop==1
     par.damp1 = par.damp1_*par.damp1;
     par.damp1 = max(par.damp1,par.dampm1);
 end
-end
-
-if strcmp(par.loop,'on')
 if loop==2
     par.damp2 = par.damp2_*par.damp2;
     par.damp2 = max(par.damp2,par.dampm2);
-end
 end
 
 % stencil decomposition happens here to solve for the PDEs; the coefficients for partial derivaties are computed
@@ -344,13 +251,15 @@ end
 end
 end
 
-V0(par.V.ivi,:,:)  = vi;
-V0(par.V.ivei,:,:) = vei;
-V0(par.V.ivzi,:,:) = vzi;
-V0(par.V.ivh,:,:)  = vh;
-V0(par.V.iveh,:,:) = veh;
-V0(par.V.ivzh,:,:) = vzh;
-
+if strcmp(par.HJBupdate,'on')
+    V0(par.V.ivi,:,:)  = vi;
+    V0(par.V.ivei,:,:) = vei;
+    V0(par.V.ivzi,:,:) = vzi;
+    V0(par.V.ivh,:,:)  = vh;
+    V0(par.V.iveh,:,:) = veh;
+    V0(par.V.ivzh,:,:) = vzh;
+end 
+        
 if round(iterT/par.dispT)==iterT/par.dispT
 if strcmp(par.outerplot,'on')
     par.savegraph_ = 'off';
@@ -361,22 +270,19 @@ end
 
 end
 
-tmp = 'sol';
-for i=1:length(param)
-    eval(['tmp = [tmp,''_'',''',param{i},''',''_'',num2str(round(par.',param{i},'*100))];'])
-end
-
 toc
 
 if ~exist(par.solFolder, 'dir')
     mkdir(par.solFolder)
 end
 cd(par.solFolder)
-
-save(tmp,'X0','X_','V0','L','vars','vars_','value','last','x1','x2')
-save('guess','X0','X_','V0','L','vars','vars_','value','last','x1','x2')
+tmp = 'sol';
+for i=1:length(param)
+    eval(['tmp = [tmp,''_'',''',param{i},''',''_'',num2str(round(par.',param{i},'*100))];'])
+end
+save(tmp,'X0','X_','V0','L','vars','vars_','value','last','x1','x2','vec1','vec2','par')
+save('guess','X0','X_','V0','L','vars','vars_','value','last','x1','x2','vec1','vec2','par')
 cd ..
 
-figure(1); clf(1);
 par.savegraph_ = par.savegraph;
 plotgraphs2D  
