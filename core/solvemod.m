@@ -6,16 +6,16 @@ function solvemod(name,varargin)
 set(0,'DefaultFigureWindowStyle','docked')
 warning('off','MATLAB:interp2:NaNstrip') 
 
-if any(strcmp(varargin,'parrallel'))
-    default_parrallel = 'off';
+if any(strcmp(varargin,'parallel'))
+    default_parallel = 'off';
 elseif ~any(strcmp(varargin,'dimensions'))
-    default_parrallel = 'on';
+    default_parallel = 'on';
 elseif any(strcmp(varargin,'dimensions'))
     ii = find(strcmp(varargin,'dimensions'));
     if strcmp(varargin{ii+1},'2D')
-        default_parrallel = 'on';
+        default_parallel = 'on';
     elseif strcmp(varargin{ii+1},'1D')
-        default_parrallel = 'off';
+        default_parallel = 'off';
     end
 end
 
@@ -28,7 +28,7 @@ addParameter(p,'innerplot','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'outerplot','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'allplot','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'debug','off',@(x) any(validatestring(x,{'on','off'})));
-addParameter(p,'parrallel',default_parrallel,@(x) any(validatestring(x,{'on','off'})));      
+addParameter(p,'parallel',default_parallel,@(x) any(validatestring(x,{'on','off'})));      
 addParameter(p,'loop','off',@(x) any(validatestring(x,{'on','off'})));      
 addParameter(p,'search','off',@(x) any(validatestring(x,{'on','off'})));
 addParameter(p,'savegraph','off',@(x) any(validatestring(x,{'on','off'})));
@@ -168,9 +168,9 @@ XT0 = X0;
 L0 = L;
 
 % INNER LOOP: the following part of code solves the set of non-linear equations for the inner loop
-if strcmp(par.parrallel,'off')
+if strcmp(par.parallel,'off')
     innerloop
-elseif strcmp(par.parrallel,'on')
+elseif strcmp(par.parallel,'on')
     innerloop_par
 end
 
@@ -273,7 +273,7 @@ end
 
 toc
 
-if ~exist(par.solFolder, 'dir')
+if not(isfolder(par.solFolder))
     mkdir(par.solFolder)
 end
 cd(par.solFolder)
