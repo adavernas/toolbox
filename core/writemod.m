@@ -1,6 +1,6 @@
 
 par.tmpFolder = ['tmp_',par.name];
-if ~exist(par.tmpFolder, 'dir')
+if not(isfolder(par.tmpFolder)) 
     mkdir(par.tmpFolder)
 end
 
@@ -11,7 +11,12 @@ if any(find(contains(path_tmp,[pwd,'\tmp_'])))
         rmpath(path_tmp{itmp(ip)});
     end
 end
-addpath([pwd,'\',par.tmpFolder])
+
+if ispc
+    addpath([pwd,'\',par.tmpFolder])
+else
+    addpath([pwd,'/',par.tmpFolder])
+end
 
 if strcmp(par.search,'off')
     modfile = regexp(fileread(['mod_',par.name,'.m']),'\n','split');
