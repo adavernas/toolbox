@@ -1,31 +1,37 @@
-# toolbox
-Toolbox for "A Solution Method for Continuous-Time General Equilibrium Models"
-Adrien d’Avernas, Valentin Schubert, and Quentin Vandeweyer (November 17, 2020)
+Toolbox for “A Solution Method for Continuous-Time General Equilibrium Models”
 
-List of code files in the folder ’files’
-- main.m: solves the model and produces the figures
-- model.m: includes all the model specific specifications. Model parameters and variables are declared in this file. Initial guesses are provided. Further, the equilibrium conditions for secondary variables as function of the endogenous variables are written first. The equations for endogenous variables are defined after. The different sections in the file are called to solve the model
-- writefun.m: Matlab file setting up the model to be solved. Equations declared in model.m are called here.
-- HJB.m: the model specific Hamiltonian-Jacobi Bellman equation is written separately from the other model equation in this file. The expression of the HJB after substituting for the optimal conditions has to be used.
-- plotgraphs1D.m: creates the figures of a model with one state variable.
-- plotgraphs2D.m: creates the figures of a model with two state variables.
+Adrien d’Avernas, Valentin Schubert and Quentin Vandeweyer
 
-Process to follow for solving a new model:
+List of code files in the folder ‘files’:
 
-A short step-by-step description to use the algorithm and code for your own model.
-1. Define variables and parameters in model.m
-2. Rewrite the system of equation in the file model.m (section ’Model’ in the code)
-3. The Hamiltonian-Jacobi Bellman Equations solved for the optimum solution has to be adapted in the file HJB.m. Important to also change the variables in the function file to the variables in your model.
-4. After inputing the new model the set of parameters, endogenous variables, and secondary variables have to be changed in the main.m file.
-5. When running the main.m file after having made changes in the 'Model' section of model.m file, it is imperative that the option ’par.write’ is set to ’on’ in the main.m file.
-6. When running the main.m for the first time, you will probably not have an initial guess.mat, if this is the case, you have to set par.guess’ to ’off ’ and par.loop’ to ’on’. Further, you should provide sensible initial guesses for the endogenous variables (and secondary variables if available) in the section ’Initial Guess for X ’ in main.m
-7. After having solved the model, the values of the equilibrium variables are saved as guess.mat and can be used by setting par.guess’ to ’on’.
-8. If the model should be solved for different sets of parameters (without changing writefun.m), the option ’par.write’ can be set to ’off ’.
+•	initpath.m: initialises paths required to solve a model
+•	mod_BruSan.m: specifies all model specific parameters, variables, and equations for a simple extension of the model provided by Brunnermeier and Sannikov (2014). A potential initial guess is also provided in this file.
+•	par_BruSan.m: this file collects all parameters required by the algorithm to solve the model, such as convergence criteria. The toolbox allows for different specifications for different models
+•	mod_DiTella.m: specifies all model specific parameters, variables, and equations for the model presented by DiTella (2016). A potential initial guess is also provided in this file.
+•	par_DiTella.m: collects all parameters required by the algorithm to solve the model based on Di Tella (2016), such as convergence criteria.
 
+The folder ‘core’ contains all files needed by the algorithm. As a general rule, no file in this folder should be changed or moved. 
 
+To solve a model using the algorithm, run the code
 
-Process to follow when working with the presented examples:
+initpath
 
-In this toolbox we propose two models based on a model introduced by Brunnermeier and Sannikov (2014) and Di Tella (2016) respectively. 
-In order to run the models, the model.m and HJB.m files of the respective models have to be copied into the 'files' folder of the toolbox (the previous model.m and HJB.m have to be replaced). 
-The model is solved by running the main.m file in the folder 'files'. Important: when changing or making changes to the model expressions in model.m or the HJB.m file, 'par.write' on line 21 in main.m has to be changed from 'off' to 'on'. Parameter values can be changed with 'par.write = 'off''
+followed by 
+
+solvemod(‘model name’, options)
+
+in Matlab
+
+Input options are:
+•	‘write’: set to either ‘on’ or ‘off’. Default value is ‘off’. The option has to be set to ‘on’ whenever changes are made in the model equations.
+•	‘guess’: set to either ‘on’ or ‘off’. Default value is ‘off’. If the algorithm should use a given matrix with an initial guess, the option has to be set to ‘on’.
+•	‘dimensions’: takes input values ‘1D’ or 2D’. Default value is ‘2D’. If the model has only one state variable, for a faster convergence, the option can be set to ‘1D’.
+•	‘method’: takes input variables ‘first_order’ and ‘forward’. Default is set for ‘first_order’. Defines which type of derivatives to be taken.
+•	‘HJBupdate’: input values are ‘on’ and ‘off’. Default value is ‘off’
+•	‘loop’: input values are ‘on’ and ‘off’. Default value is ‘off’
+•	‘search’: input values are ‘on’ and ‘off’. Default value is ‘off’
+•	‘outerplot’: input values are ‘on’ and ‘off’. Default value is ‘off’. Plot figures during outer loop iteration
+•	‘innerplot’: input values are ‘on’ and ‘off’. Default value is ‘off’. Plot figures during inner loop iteration
+•	‘allplot’: input values are ‘on’ and ‘off’. Default value is ‘off’. Plot figures of all variables.
+•	‘savegraph’: input values are ‘on’ and ‘off’. Default value is ‘off’. Save created figures
+•	‘dispT’: takes integer as inputs. Default value is 10. Defines iterations to be displayed in the loop.
