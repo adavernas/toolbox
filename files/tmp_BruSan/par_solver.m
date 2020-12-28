@@ -9,16 +9,16 @@ par.minK = 2;
 par.maxK = 100;
 par.tolK = 1e-4;
 
-par.damp1 = 0.5;
-par.damp1_ = 0.0;
+par.damp1 = 0.10;
+par.damp1_ = 1.0;
 par.dampm1 = 0.0;
 
-par.damp2 = 0.5;
-par.damp2_ = 0.0;
+par.damp2 = 0.10;
+par.damp2_ = 1.0;
 par.dampm2 = 0.0;
 
 % HJB LOOP: to update the derivatives using past iterations
-par.minT1 = 10;
+par.minT1 = 100;
 par.minT2 = 10;
 
 par.maxT = 1000;
@@ -43,8 +43,8 @@ vec1b = 0.99;
 vec2a = 0.01;
 vec2b = 0.99;
 
-par.n1 = 50;
-par.n2 = 50; 
+par.n1 = 30;
+par.n2 = 30; 
 
 vec1 = linspace(vec1a,vec1b,par.n1); % linear spacing is generally more stable
 vec2 = linspace(vec2a,vec2b,par.n2);
