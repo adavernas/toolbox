@@ -2,6 +2,8 @@ Toolbox for “A Solution Method for Continuous-Time General Equilibrium Models�
 
 Adrien d’Avernas, Valentin Schubert and Quentin Vandeweyer
 
+This repository contains the MATLAB toolbox to solve a variety of continuous-time model using the method from the paper "A Solution Method for Continuous-Time General Equilibrium Model," by Adrien d’Avernas, Valentin Schubert and Quentin Vandeweyer (2020). 
+
 List of code files in the folder ‘files’:
 
 - initpath.m: initialises paths required to solve a model
