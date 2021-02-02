@@ -12,7 +12,7 @@ for h=1:par.nx
     
     plot(vec1,Zq); grid on;
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latex{h},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -32,7 +32,7 @@ for h_=1:par.nx_
     
     plot(vec1,Zq); grid on;
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latex_{h_},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -59,7 +59,7 @@ for v=1:par.nv
     xlim([vec1(aa1) vec1(bb1)]);
 %     ylim([ylvd(v) ylvu(v)]);
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latexv{v},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -75,7 +75,7 @@ Zq  = squeeze(squeeze(reshape(rrvi,[1 par.dim]))) - squeeze(squeeze(reshape(uuvi
 
 plot(vec1,Zq); grid on;
 
-xlabel('$\eta$','Interpreter','LateX');
+xlabel(latexs{1},'Interpreter','LateX');
 
 title(['$\mu^\theta$'],'Interpreter','LateX');
 set(gca,'FontSize',16)

@@ -30,9 +30,9 @@ for h=1:par.nx
     set(m,'facecolor','none')
     view([va,vb]); grid on;
 
-    ylabel('$\theta$','Interpreter','LateX'); 
+    ylabel(latexs{2},'Interpreter','LateX'); 
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latex{h},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -60,9 +60,9 @@ if  any(ismember(vplot_,vars{h}))
     set(m,'facecolor','none')
     view([va,vb]); grid on;
 
-    ylabel('$\theta$','Interpreter','LateX'); 
+    ylabel(latexs{2},'Interpreter','LateX'); 
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latex{h},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -84,9 +84,9 @@ if  any(ismember(vplot_,vars_{h_}))
     set(m,'facecolor','none')
     view([va,vb]); grid on;
 
-    ylabel('$\theta$','Interpreter','LateX'); 
+    ylabel(latexs{2},'Interpreter','LateX'); 
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latex_{h_},'$'],'Interpreter','LateX')
     set(gca,'FontSize',16)
@@ -108,9 +108,9 @@ if  any(ismember(vplot_,value{v}))
     set(m,'facecolor','none')
     view([va,vb]); grid on;
 
-    ylabel('$\theta$','Interpreter','LateX'); 
+    ylabel(latexs{2},'Interpreter','LateX'); 
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latexv{v},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -136,9 +136,9 @@ for h_=1:par.nx_
     set(m,'facecolor','none')
     view([va,vb]); grid on;
 
-    ylabel('$\theta$','Interpreter','LateX'); 
+    ylabel(latexs{2},'Interpreter','LateX'); 
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latex_{h_},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
@@ -161,9 +161,9 @@ for v=1:par.nv
     set(m,'facecolor','none')
     view([va,vb]); grid on;
 
-    ylabel('$\theta$','Interpreter','LateX'); 
+    ylabel(latexs{2},'Interpreter','LateX'); 
     
-    xlabel('$\eta$','Interpreter','LateX');
+    xlabel(latexs{1},'Interpreter','LateX');
 
     title(['$',latexv{v},'$'],'Interpreter','LateX');
     set(gca,'FontSize',16)
