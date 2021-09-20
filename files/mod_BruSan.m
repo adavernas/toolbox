@@ -125,7 +125,7 @@ muni  = r + wi*(muri-r) - ci; % Equation (29)
 munh  = r + wh*(murh-r) - ch; % Equation (30)
 
 % System to Solve with Newton-Raphson
-eqmue = ( muni - muk - muq - sigma*sigqk + 1/2*(sigqk+sigma)^2 + 1/2*sigqs^2 - wi*sigqs^2 - wi*(sigqk+sigma)^2 ) - mue; % Equation (31)
+eqmue = ( muni - muk - muq - sigma*sigqk +(sigqk+sigma)^2 + sigqs^2 - wi*sigqs^2 - wi*(sigqk+sigma)^2 ) - mue; % Equation (31)
 
 eqq   = (ci*e + ch*(1-e))*q - psii*(ai-iotai) - (1-psii)*(ah-iotah); % Equation (32)
 
